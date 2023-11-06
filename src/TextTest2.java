@@ -1,4 +1,6 @@
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TextTest2 {
 
@@ -13,15 +15,14 @@ public class TextTest2 {
     // 안녕하abcdefgh -> 안녕하abcd => 3, 4 => 9, 4 = 13
     // 안녕하세abcdefgh -> 안녕하세ab => 4, 2 => 12, 2 = 14
 
-    // 한글 18자 길이를 기준 (54Byte)
-    // 영어 36자 (36Byte)
-    // 한글, 영어가 섞이면
+    // 한글 14자 길이를 기준 (52Byte)
+    // 영어 28자 (28Byte)
+    // 한글, 영어가 섞이면 1줄에 14 ~ 28자 수용 가능
 
     // 영어 2 == 한글 1
-    // 한글 2
-    // 영어 1
     public static int getLineLength(String content, int startAt) {
         // 1페이지당 시작 글자 index
+        // 해당 index 이후 다음 글자
         content = content.substring(startAt);
 
         // length 초기화
@@ -49,17 +50,53 @@ public class TextTest2 {
             // 필요한 length 개수
             loops++;
 
-            if (5 <= length && length <= 10) {
+            if (14 <= length && length <= 28) {
                 break;
             }
             // \n 이 나오면 줄바꿈(fot문 종료)
             if (c == '\n')
                 break;
         }
-        System.out.println();
 
         int totalLength = loops;
         return totalLength;
+    }
+
+    public static List<String> splitTextIntoPages(String content) {
+        int pages = 0;
+        int startAt = 0;
+        List<String> pageList = new ArrayList<>();
+
+        while (startAt < content.length()) {
+            StringBuilder pageText = new StringBuilder();
+            int length = 0;
+            for (int i = 1; i <= 18; i++) {
+                length = getLineLength(content, startAt);
+                startAt = startAt + length;
+
+                if (length == -1)
+                    break;
+
+                pageText.append(content, startAt - length, startAt); // 1page 당 content의 시작 텍스트 위치와 끝 위치
+                pageText.append("\n"); // 페이지를 구분할 \n
+            }
+
+            pageList.add(pageText.toString());
+            // StringBuilder는 문자열을 가변적으로 다루기 위해 설계된 클래스로, 문자열을 동적으로 추가, 수정, 삭제할 수 있습니다. 따라서
+            // StringBuilder는 문자열을 효율적으로 다루기 위한 용도로 사용됩니다.
+
+            // StringBuilder 객체에 저장된 문자열은 StringBuilder가 제공하는 toString() 메서드를 호출하여 String으로
+            // 변환할 수 있습니다. 이렇게 변환된 String은 불변이며 수정이 불가능한 상태가 됩니다.
+
+            pages++;
+
+            if (length == -1)
+                break;
+        }
+
+        System.out.println("총 page 수 : " + pages);
+
+        return pageList;
     }
 
     // 한줄에 한글 6자
@@ -67,43 +104,19 @@ public class TextTest2 {
     public static void main(String[] args) {
 
         // 1. 책 내용
-        String content = "안녕\n하세요.반갑습니다.^^제이름은 ;;입니다. 만나서 반가워요오!!";
+        String content = "3. 인간 행동 잉면에는 언제나 왜 또는 목표가 있다. 인간의 모든 활동에 목적이나 이유가 있는 것이다. 따라서 자신이 어떤 목적이나 목표를 선택하는 지 명확하게 의식해야 한다. 그러면 방법은 저절로 나타나기 시작한다. 행동은 목적이나 목표를 따라가게 마련이기 때문이다.\r\n"
+                + //
+                ": 집착의 법칙과 비슷한 부분이 있다. 집착(대상)의 목적(이유)를 설정하고 목표(방법)을 세우고 달성해야 한다. \r\n" + //
+                "지금 오늘의 내가 생각한 목적과 목표가 분명 작년과는 조금 다르다. 방향과 대상은 같지만 이유가 달라졌고, 방법에도 약간의 변화가 생겼다. 여느때 처럼 다이어리에 목표로만 남겨두고 행동하지 않았다면? 행동했기 때문에 목적과 목표가 수정되었고, \r\n"
+                + //
+                "의식했기 때문에 행동이 바뀌고 있다고 생각한다.";
 
-        // 제일 최초의 글자 index
-        int startAt = 0;
+        List<String> pageList = splitTextIntoPages(content);
 
-        // 1page
-        for (int i = 1; i <= 2; i++) {
-            // length = [5, 7]
-            int length = getLineLength(content, startAt); // [0, startAt+lenght = 5, startAt+length = 12]
-            startAt = startAt + length;
-            System.out.println("★ 1page length = " + length);
-
-            if (length == -1)
-                break;
-        }
-
-        // 2page startAt
-        // System.out.println("★ 2page startAt : " + startAt);
-        for (int i = 1; i <= 2; i++) {
-            // length = [5, 7]
-            int length = getLineLength(content, startAt); // [0, startAt+lenght = 5, startAt+length = 12]
-            startAt = startAt + length;
-            System.out.println("★ 2page length = " + length);
-
-            if (length == -1)
-                break;
-        }
-
-        // 3page startAt
-        for (int i = 1; i <= 2; i++) {
-            // length = [5, 7]
-            int length = getLineLength(content, startAt); // [0, startAt+lenght = 5, startAt+length = 12]
-            startAt = startAt + length;
-            System.out.println("★ 3page length = " + length);
-
-            if (length == -1)
-                break;
-        }
+        // for (String string : pageList) {
+        // System.out.println("page");
+        // System.out.println(string);
+        // }
     }
+
 }
