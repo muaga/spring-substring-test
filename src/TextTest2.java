@@ -47,12 +47,13 @@ public class TextTest2 {
                     // System.out.println("한글 length : " + length);
                 }
 
-            // 필요한 length 개수
+            // 1줄에 사용된 텍스트 갯수
             loops++;
 
             if (14 <= length && length <= 28) {
                 break;
             }
+
             // \n 이 나오면 줄바꿈(fot문 종료)
             if (c == '\n')
                 break;
@@ -77,7 +78,7 @@ public class TextTest2 {
                 if (length == -1)
                     break;
 
-                pageText.append(content, startAt - length, startAt); // 1page 당 content의 시작 텍스트 위치와 끝 위치
+                pageText.append(content, startAt - length, startAt); // 1줄 당 content의 시작 텍스트 위치와 끝 위치
                 pageText.append("\n"); // 페이지를 구분할 \n
             }
 
@@ -95,6 +96,7 @@ public class TextTest2 {
         }
 
         System.out.println("총 page 수 : " + pages);
+        // System.out.println("pageList : " + pageList);
 
         return pageList;
     }
@@ -111,12 +113,16 @@ public class TextTest2 {
                 + //
                 "의식했기 때문에 행동이 바뀌고 있다고 생각한다.";
 
+        // page마다 split 된 contentList
         List<String> pageList = splitTextIntoPages(content);
 
-        // for (String string : pageList) {
-        // System.out.println("page");
-        // System.out.println(string);
-        // }
+        for (String string : pageList) {
+            System.out.println("page");
+            System.out.println(string);
+        }
+
+        // int length = getLineLength(content, 0);
+        // System.out.println(length);
     }
 
 }
